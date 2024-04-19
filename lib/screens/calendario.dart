@@ -72,7 +72,7 @@ Widget _buildNavigationButton(BuildContext context, IconData icon, String label,
       children: [
         Container(
           decoration: BoxDecoration(
-              color: isActive ? AppColors.thirdRectangleColor : Colors.transparent,
+            color: isActive ? AppColors.thirdRectangleColor : Colors.transparent,
             borderRadius: BorderRadius.circular(5.0),
           ),
           padding: EdgeInsets.all(8.0),
@@ -101,21 +101,19 @@ Widget _buildNavigationButton(BuildContext context, IconData icon, String label,
 }
 
 
-void _navigateToPage(BuildContext context, String pageName) {
-  switch (pageName) {
-    case 'Medicamentos':
-      Navigator.pushNamed(context, '/menu');
-      break;
-    case 'Calendario':
-      // Ya estás en la página de Calendario, no es necesario navegar
-      break;
-    case 'Notificaciones':
-      Navigator.pushNamed(context, '/notificaciones');
-      break;
+  void _navigateToPage(BuildContext context, String pageName) {
+    switch (pageName) {
+      case 'Medicamentos':
+        Navigator.pushNamed(context, '/menu');
+        break;
+      case 'Calendario':
+        // Ya estás en la página de Calendario, no es necesario navegar
+        break;
+      case 'Notificaciones':
+        Navigator.pushNamed(context, '/notificaciones');
+        break;
+    }
   }
-}
-
-
 }
 
 class MedicationCard extends StatelessWidget {
@@ -149,8 +147,42 @@ class MedicationCard extends StatelessWidget {
           'Dosis: $dosage',
           style: TextStyle(color: Colors.black87),
         ),
+        trailing: IconButton(
+          icon: Icon(Icons.info), // Icono para mostrar más información
+          onPressed: () {
+            _showMedicationDetails(context); // Método para mostrar detalles del medicamento
+          },
+        ),
       ),
     );
   }
-}
 
+  void _showMedicationDetails(BuildContext context) {
+    // Aquí puedes implementar la lógica para mostrar los detalles del medicamento
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(name), // Nombre del medicamento como título del diálogo
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Dosis: $dosage'),
+              SizedBox(height: 8.0),
+              // Agrega más detalles según sea necesario
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              child: Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
