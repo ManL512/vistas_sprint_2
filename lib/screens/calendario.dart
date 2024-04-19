@@ -148,7 +148,7 @@ class MedicationCard extends StatelessWidget {
           style: TextStyle(color: Colors.black87),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.info), // Icono para mostrar más información
+          icon: Icon(Icons.info_outline), // Icono para mostrar más información
           onPressed: () {
             _showMedicationDetails(context); // Método para mostrar detalles del medicamento
           },
