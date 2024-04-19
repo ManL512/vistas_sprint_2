@@ -1,42 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Importa para trabajar con fechas
 import 'package:vistas_sprint_2/constants/constants.dart';
-
 
 class CalendarioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Barra superior
       appBar: AppBar(
-        title: Text('Calendario', style: TextStyle(color: AppColors.firstRectangleColor)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              // Acción al presionar el icono de perfil
-            },
-          ),
-        ],
+        title: Text('Calendario'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.boxColor,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Medicamentos del dia',
-                  prefixIcon: Icon(Icons.calendar_month_outlined),
-                  border: InputBorder.none,
-                ),
-              ),
+          // Barra de días de la semana
+          Container(
+            height: 60.0,
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 7,
+              itemBuilder: (context, index) {
+                final day = DateTime.now().add(Duration(days: index));
+                final isToday = index == 0; // Verifica si es el día actual
+
+                return _buildDayItem(day, isToday);
+              },
             ),
           ),
+          // Resto del contenido
           Expanded(
             child: ListView(
               children: [
@@ -53,7 +44,7 @@ class CalendarioPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildNavigationButton(context, Icons.medication, 'Medicamentos', false),
-                _buildNavigationButton(context, Icons.calendar_today, 'Calendario', true), //Efecto de la barra navegacion
+                _buildNavigationButton(context, Icons.calendar_today, 'Calendario', true),
                 _buildNavigationButton(context, Icons.notifications, 'Notificaciones', false),
               ],
             ),
@@ -63,43 +54,77 @@ class CalendarioPage extends StatelessWidget {
     );
   }
 
-Widget _buildNavigationButton(BuildContext context, IconData icon, String label, bool isActive) {
-  return GestureDetector(
-    onTap: () {
-      _navigateToPage(context, label);
-    },
-    child: Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: isActive ? AppColors.thirdRectangleColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                color: isActive ? Colors.white : Colors.black,
-                size: 32.0,
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isActive ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
+  Widget _buildDayItem(DateTime day, bool isToday) {
+    final dayFormat = DateFormat.E(); // Formato de día abreviado (Lun, Mar, Mié, ...)
+    final dateFormat = DateFormat.d(); // Formato de día del mes (1, 2, 3, ...)
 
+    return Container(
+      width: 50.0,
+      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      decoration: BoxDecoration(
+        color: isToday ?  AppColors.thirdRectangleColor : Colors.transparent,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            dayFormat.format(day),
+            style: TextStyle(
+              color: isToday ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.0,
+            ),
+          ),
+          Text(
+            dateFormat.format(day),
+            style: TextStyle(
+              color: isToday ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationButton(BuildContext context, IconData icon, String label, bool isActive) {
+    return GestureDetector(
+      onTap: () {
+        _navigateToPage(context, label);
+      },
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.thirdRectangleColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: isActive ? Colors.white : Colors.black,
+                  size: 32.0,
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _navigateToPage(BuildContext context, String pageName) {
     switch (pageName) {
@@ -130,7 +155,6 @@ class MedicationCard extends StatelessWidget {
     return Card(
       elevation: 4.0,
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      color: AppColors.boxColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -148,9 +172,9 @@ class MedicationCard extends StatelessWidget {
           style: TextStyle(color: Colors.black87),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.info_outline), // Icono para mostrar más información
+          icon: Icon(Icons.info_outline),
           onPressed: () {
-            _showMedicationDetails(context); // Método para mostrar detalles del medicamento
+            _showMedicationDetails(context);
           },
         ),
       ),
@@ -158,12 +182,11 @@ class MedicationCard extends StatelessWidget {
   }
 
   void _showMedicationDetails(BuildContext context) {
-    // Aquí puedes implementar la lógica para mostrar los detalles del medicamento
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(name), // Nombre del medicamento como título del diálogo
+          title: Text(name),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +199,7 @@ class MedicationCard extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cerrar el diálogo
+                Navigator.of(context).pop();
               },
               child: Text('Cerrar'),
             ),
